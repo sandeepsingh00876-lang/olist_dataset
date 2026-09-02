@@ -49,10 +49,21 @@ fetch("seller vs total_revenue.csv")
     });
 
     fetch("seller vs total_order.csv")
-    .then(response => response.text())
-    .then(data =>{
+    .then(response => {
+        console.log("Status:", response.status);
+        console.log("Requested URL:", response.url);
+
+        if (!response.ok) {
+            throw new Error("CSV file not found");
+        }
+
+        return response.text();
+    })
+    .then(data => {
+        
         const rows = data.trim().split("\n");
 
+        
         let orderdata = []
         for (let i = 1; i < rows.length; i++) {
 
@@ -66,6 +77,25 @@ fetch("seller vs total_revenue.csv")
             });
 
         }
-    console.log(orderdata)
+        const sellers = orderdata.map(item => item.seller);
+const orders = orderdata.map(item => item.total_order);
 
+new Chart(document.getElementById("orderChart"), {
+
+    type: "bar",
+
+    data: {
+        labels: sellers,
+
+        datasets: [{
+            label: "Total Orders",
+            data: orders
+        }]
+    },
+
+    options: {
+        responsive: true
+    }
+
+});
     });
