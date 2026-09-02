@@ -48,7 +48,7 @@ fetch("seller vs total_revenue.csv")
 
     });
 
-    fetch("seller vs total_revenue.csv")
+    fetch("seller vs total_order.csv")
     .then(response => response.text())
     .then(data =>{
         const rows = data.trim().split("\n");
