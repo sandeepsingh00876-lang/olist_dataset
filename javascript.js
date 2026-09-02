@@ -1,23 +1,49 @@
-fetch("seller vs total_revenue.csv")
+f\
+
+
+
+
+
+
+
+
+
+
+\\etch("seller vs total_revenue.csv")
     .then(response => response.text())
     .then(data => {
 
-        const rows = data.split("\n");
+        const rows = data.trim().split("\n");
 
-        const headers = rows[0].split(",");
-
-        console.log(headers);
+        let sellers = [];
+        let revenues = [];
 
         for (let i = 1; i < rows.length; i++) {
 
             const row = rows[i].split(",");
-            if (rows[i].trim() === "") {
-        continue;
-    }
 
-            const seller = row[0];
-            const revenue = Number(row[1]);
+            sellers.push(row[0]);
+            revenues.push(Number(row[1]));
 
-            console.log(seller, revenue);
         }
+
+        new Chart(document.getElementById("sellerChart"), {
+
+            type: "bar",
+
+            data: {
+                labels: sellers,
+
+                datasets: [{
+                    label: "Total Revenue",
+                    data: revenues
+                }]
+            },
+
+            options: {
+                responsive: true
+            }
+
+        });
+
     });
