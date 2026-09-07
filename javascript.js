@@ -41,7 +41,8 @@ fetch("seller vs total_revenue.csv")
             },
 
             options: {
-                responsive: true
+                responsive: true,
+                maintainAspectRatio: false
             }
 
         });
@@ -80,7 +81,7 @@ fetch("seller vs total_revenue.csv")
         const sellers = orderdata.map(item => item.seller);
 const orders = orderdata.map(item => item.total_order);
 
-new Chart(document.getElementById("orderChart"), {
+new Chart(document.getElementById("sellerOrderChart"), {
 
     type: "bar",
 
@@ -94,7 +95,8 @@ new Chart(document.getElementById("orderChart"), {
     },
 
     options: {
-        responsive: true
+        responsive: true,
+        maintainAspectRatio: false
     }
 
 });

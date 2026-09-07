@@ -7,16 +7,20 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <h1 class="title">Seller Dashboard</h1>
+    <div class="charts-container">
 
-    <h1>Seller Dashboard</h1>
-        <div class="chart-container">
-            <h2>Top 10 Sellers by Revenue</h2>
-            <canvas id="sellerChart"></canvas>
-        </div>
-        <div class="chart-container">
-            <h2>Top 10 Sellers by Units Sold</h2>
-            <canvas id="orderChart"></canvas>
-        </div>
+    <div class="chart-box">
+    <h2 class="revenue-heading">Top 10 Sellers by Revenue</h2>
+        <canvas id="sellerChart"></canvas>
+    </div>
+
+    <div class="chart-box">
+    <h2 class="orders-heading">Top 10 Sellers by Total Orders</h2>
+        <canvas id="sellerOrderChart"></canvas>
+    </div>
+
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="javascript.js"></script>
