@@ -32,7 +32,7 @@ fetch("seller vs total_revenue.csv")
             type: "bar",
 
             data: {
-                labels: sellers,
+                labels: sellers.map(item => item.substring(0, 8) + "..."),
 
                 datasets: [{
                     label: "Total Revenue",
@@ -41,6 +41,7 @@ fetch("seller vs total_revenue.csv")
             },
 
             options: {
+                indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false
             }
@@ -86,7 +87,7 @@ new Chart(document.getElementById("sellerOrderChart"), {
     type: "bar",
 
     data: {
-        labels: sellers,
+        labels: orderdata.map(item => item.seller.substring(0, 8) + "..."),
 
         datasets: [{
             label: "Total Orders",
@@ -95,9 +96,124 @@ new Chart(document.getElementById("sellerOrderChart"), {
     },
 
     options: {
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false
     }
 
 });
     });
+
+fetch("top_10_seller vs product_sold.csv")
+    .then(response => {
+        console.log("Status:", response.status);
+        console.log("request url", response.url)
+
+        if(!response.ok)
+            throw new Error("CSV File Not Found")
+
+        return response.text();
+            
+     })
+    .then (data => {
+        const rows = data.trim().split("\n");
+
+        console.log(data)
+
+        let productdata = []
+        for(let i = 1; i < rows.length; i++) {
+
+            const row = rows[i].split(",");
+
+            const seller = row[0];
+            const product = row[1];
+            productdata.push({
+                seller: seller,
+                product: product
+
+            });
+
+        }
+        const sellers = productdata.map(item => item.seller);
+        const products = productdata.map(item => item.product)
+
+        new Chart(document.getElementById("SellerProductChart"),{
+        
+            type: "bar",
+
+            data: {
+        labels: productdata.map(item => item.seller.substring(0, 8) + "..."),
+
+        datasets: [{
+            label: "product",
+            data: products
+        }]
+    },
+        options: {
+            indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false
+    }
+        });
+
+           });
+
+fetch("seller vs avg_order_value.csv")
+    .then(response => {
+        console.log("Status:", response.status);
+        console.log("request url", response.url)
+
+        if(!response.ok)
+            throw new Error("CSV File Not Found")
+
+        return response.text();
+            
+     })
+    .then (data => {
+        const rows = data.trim().split("\n");
+
+        console.log(data)
+
+        let seller_avg_order_value = []
+        for(let i = 1; i < rows.length; i++) {
+
+            const row = rows[i].split(",");
+
+            const seller = row[0];
+            const avg_order_value = row[3];
+            seller_avg_order_value.push({
+                seller: seller,
+                avg_order_value: avg_order_value,
+
+            });
+
+        }
+
+        //sort the sellerdata array in descending order based on revenue
+        seller_avg_order_value.sort((a, b) => b.avg_order_value - a.avg_order_value);
+        // get the top 10 sellers
+        seller_avg_order_value = seller_avg_order_value.slice(0, 10);
+
+        const sellers = seller_avg_order_value.map(item => item.seller);
+        const avg_order_value = seller_avg_order_value.map(item => item.avg_order_value)
+
+        new Chart(document.getElementById("SellerAvgOrderValue"),{
+        
+            type: "bar",
+
+            data: {
+        labels: seller_avg_order_value.map(item => item.seller.substring(0, 8) + "..."),
+
+        datasets: [{
+            label: "avg order value",
+            data: avg_order_value
+        }]
+    },
+        options: {
+            indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false
+    }
+        });
+
+           });

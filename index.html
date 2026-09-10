@@ -11,16 +11,33 @@
     <div class="charts-container">
 
     <div class="chart-box">
-    <h2 class="revenue-heading">Top 10 Sellers by Revenue</h2>
+        <div class="chart-header">
+            <h3>Top 10 Sellers by Revenue</h3>
+        </div>
         <canvas id="sellerChart"></canvas>
+</div>
+
+    <div class="chart-box">
+        <div class="chart-header">
+            <h3>Top 10 Sellers by Total Orders</h3>
+        </div>
+        <canvas id="sellerOrderChart"></canvas>
+
+</div>
+
+    <div class="chart-box">
+        <div class="chart-header">
+            <h3>Top 10 Sellers by Total Products</h3>
+        </div>
+        <canvas id="SellerProductChart"></canvas>
     </div>
 
     <div class="chart-box">
-    <h2 class="orders-heading">Top 10 Sellers by Total Orders</h2>
-        <canvas id="sellerOrderChart"></canvas>
+        <div class="chart-header">
+            <h3>Top 10 Sellers by Avg Order Value</h3>
+        </div>
+        <canvas id="SellerAvgOrderValue"></canvas>
     </div>
-
-</div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="javascript.js"></script>
