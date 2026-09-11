@@ -1,219 +1,434 @@
-fetch("seller vs total_revenue.csv")
-    .then(response => response.text())
-    .then(data => {
+let sellerdata = [];
 
-        const rows = data.trim().split("\n");
 
-        
-        let sellerdata = []
-        for (let i = 1; i < rows.length; i++) {
+// =====================================
+// LOAD CSV
+// =====================================
 
-            const row = rows[i].split(",");
+fetch("seller_performance.csv")
 
-            const seller = row[0];
-            const revenue = Number(row[1]);
-            sellerdata.push({
-                seller: seller,
-                revenue: revenue
-            });
-
-        }
-
-        //sort the sellerdata array in descending order based on revenue
-        sellerdata.sort((a, b) => b.revenue - a.revenue);
-        // get the top 10 sellers
-        sellerdata = sellerdata.slice(0, 10);
-
-        const sellers = sellerdata.map(item => item.seller);
-        const revenues = sellerdata.map(item => item.revenue);
-
-        new Chart(document.getElementById("sellerChart"), {
-
-            type: "bar",
-
-            data: {
-                labels: sellers.map(item => item.substring(0, 8) + "..."),
-
-                datasets: [{
-                    label: "Total Revenue",
-                    data: revenues
-                }]
-            },
-
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false
-            }
-
-        });
-
-    });
-
-    fetch("seller vs total_order.csv")
     .then(response => {
-        console.log("Status:", response.status);
-        console.log("Requested URL:", response.url);
 
         if (!response.ok) {
             throw new Error("CSV file not found");
         }
 
         return response.text();
+
     })
+
     .then(data => {
-        
+
         const rows = data.trim().split("\n");
 
-        
-        let orderdata = []
+        const headers = rows[0].split(",");
+
+        sellerdata = [];
+
         for (let i = 1; i < rows.length; i++) {
 
             const row = rows[i].split(",");
 
-            const seller = row[0];
-            const total_order = Number(row[1]);
-            orderdata.push({
-                seller: seller,
-                total_order: total_order
+            sellerdata.push({
+
+                seller_id: row[0],
+
+                total_revenue: Number(row[1]),
+
+                avg_order_value: Number(row[2]),
+
+                total_orders: Number(row[3]),
+
+                total_product_sold: Number(row[4])
+
             });
 
         }
-        const sellers = orderdata.map(item => item.seller);
-const orders = orderdata.map(item => item.total_order);
 
-new Chart(document.getElementById("sellerOrderChart"), {
 
-    type: "bar",
+        console.log("Seller Performance Data:", sellerdata);
 
-    data: {
-        labels: orderdata.map(item => item.seller.substring(0, 8) + "..."),
 
-        datasets: [{
-            label: "Total Orders",
-            data: orders
-        }]
-    },
+        // Run dashboard functions
 
-    options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false
-    }
+        calculateKPIs();
 
-});
+        createRevenueChart();
+
+        createOrderChart();
+
+        createProductChart();
+
+        createAOVChart();
+
+        createSellerTable();
+
+    })
+
+    .catch(error => {
+
+        console.error("Error loading CSV:", error);
+
     });
 
-fetch("top_10_seller vs product_sold.csv")
-    .then(response => {
-        console.log("Status:", response.status);
-        console.log("request url", response.url)
 
-        if(!response.ok)
-            throw new Error("CSV File Not Found")
 
-        return response.text();
-            
-     })
-    .then (data => {
-        const rows = data.trim().split("\n");
+// =====================================
+// KPI CALCULATIONS
+// =====================================
 
-        console.log(data)
+function calculateKPIs() {
 
-        let productdata = []
-        for(let i = 1; i < rows.length; i++) {
+    const totalRevenue = sellerdata.reduce(
+        (sum, item) => sum + item.total_revenue,
+        0
+    );
 
-            const row = rows[i].split(",");
 
-            const seller = row[0];
-            const product = row[1];
-            productdata.push({
-                seller: seller,
-                product: product
+    const totalOrders = sellerdata.reduce(
+        (sum, item) => sum + item.total_orders,
+        0
+    );
 
-            });
 
-        }
-        const sellers = productdata.map(item => item.seller);
-        const products = productdata.map(item => item.product)
+    const totalProducts = sellerdata.reduce(
+        (sum, item) => sum + item.total_product_sold,
+        0
+    );
 
-        new Chart(document.getElementById("SellerProductChart"),{
-        
-            type: "bar",
 
-            data: {
-        labels: productdata.map(item => item.seller.substring(0, 8) + "..."),
+    const totalSellers = sellerdata.length;
 
-        datasets: [{
-            label: "product",
-            data: products
-        }]
-    },
-        options: {
-            indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false
-    }
+
+    document.getElementById("totalRevenue").textContent =
+        "₹" + totalRevenue.toLocaleString("en-IN", {
+            maximumFractionDigits: 0
         });
 
-           });
 
-fetch("seller vs avg_order_value.csv")
-    .then(response => {
-        console.log("Status:", response.status);
-        console.log("request url", response.url)
+    document.getElementById("totalOrders").textContent =
+        totalOrders.toLocaleString("en-IN");
 
-        if(!response.ok)
-            throw new Error("CSV File Not Found")
 
-        return response.text();
-            
-     })
-    .then (data => {
-        const rows = data.trim().split("\n");
+    document.getElementById("totalSellers").textContent =
+        totalSellers.toLocaleString("en-IN");
 
-        console.log(data)
 
-        let seller_avg_order_value = []
-        for(let i = 1; i < rows.length; i++) {
+    document.getElementById("totalProducts").textContent =
+        totalProducts.toLocaleString("en-IN");
 
-            const row = rows[i].split(",");
+}
 
-            const seller = row[0];
-            const avg_order_value = row[3];
-            seller_avg_order_value.push({
-                seller: seller,
-                avg_order_value: avg_order_value,
 
-            });
+
+// =====================================
+// REVENUE CHART
+// =====================================
+
+function createRevenueChart() {
+
+    const data = [...sellerdata]
+        .sort((a, b) => b.total_revenue - a.total_revenue)
+        .slice(0, 10);
+
+
+    new Chart(document.getElementById("revenueChart"), {
+
+        type: "bar",
+
+        data: {
+
+            labels: data.map(item =>
+                item.seller_id.substring(0, 8) + "..."
+            ),
+
+            datasets: [{
+
+                label: "Total Revenue",
+
+                data: data.map(item =>
+                    item.total_revenue
+                ),
+
+                borderWidth: 0
+
+            }]
+
+        },
+
+        options: {
+
+            indexAxis: "y",
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                }
+
+            },
+
+            scales: {
+
+                x: {
+                    beginAtZero: true
+                }
+
+            }
 
         }
 
-        //sort the sellerdata array in descending order based on revenue
-        seller_avg_order_value.sort((a, b) => b.avg_order_value - a.avg_order_value);
-        // get the top 10 sellers
-        seller_avg_order_value = seller_avg_order_value.slice(0, 10);
+    });
 
-        const sellers = seller_avg_order_value.map(item => item.seller);
-        const avg_order_value = seller_avg_order_value.map(item => item.avg_order_value)
+}
 
-        new Chart(document.getElementById("SellerAvgOrderValue"),{
-        
-            type: "bar",
 
-            data: {
-        labels: seller_avg_order_value.map(item => item.seller.substring(0, 8) + "..."),
 
-        datasets: [{
-            label: "avg order value",
-            data: avg_order_value
-        }]
-    },
+// =====================================
+// ORDERS CHART
+// =====================================
+
+function createOrderChart() {
+
+    const data = [...sellerdata]
+        .sort((a, b) => b.total_orders - a.total_orders)
+        .slice(0, 10);
+
+
+    new Chart(document.getElementById("orderChart"), {
+
+        type: "bar",
+
+        data: {
+
+            labels: data.map(item =>
+                item.seller_id.substring(0, 8) + "..."
+            ),
+
+            datasets: [{
+
+                label: "Total Orders",
+
+                data: data.map(item =>
+                    item.total_orders
+                ),
+
+                borderWidth: 0
+
+            }]
+
+        },
+
         options: {
-            indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false
-    }
-        });
 
-           });
+            indexAxis: "y",
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                }
+
+            }
+
+        }
+
+    });
+
+}
+
+
+
+// =====================================
+// PRODUCTS SOLD CHART
+// =====================================
+
+function createProductChart() {
+
+    const data = [...sellerdata]
+        .sort((a, b) => b.total_product_sold - a.total_product_sold)
+        .slice(0, 10);
+
+
+    new Chart(document.getElementById("productChart"), {
+
+        type: "bar",
+
+        data: {
+
+            labels: data.map(item =>
+                item.seller_id.substring(0, 8) + "..."
+            ),
+
+            datasets: [{
+
+                label: "Products Sold",
+
+                data: data.map(item =>
+                    item.total_product_sold
+                ),
+
+                borderWidth: 0
+
+            }]
+
+        },
+
+        options: {
+
+            indexAxis: "y",
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                }
+
+            }
+
+        }
+
+    });
+
+}
+
+
+
+// =====================================
+// AVERAGE ORDER VALUE CHART
+// =====================================
+
+function createAOVChart() {
+
+    const data = [...sellerdata]
+        .sort((a, b) => b.avg_order_value - a.avg_order_value)
+        .slice(0, 10);
+
+
+    new Chart(document.getElementById("aovChart"), {
+
+        type: "bar",
+
+        data: {
+
+            labels: data.map(item =>
+                item.seller_id.substring(0, 8) + "..."
+            ),
+
+            datasets: [{
+
+                label: "Average Order Value",
+
+                data: data.map(item =>
+                    item.avg_order_value
+                ),
+
+                borderWidth: 0
+
+            }]
+
+        },
+
+        options: {
+
+            indexAxis: "y",
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                }
+
+            }
+
+        }
+
+    });
+
+}
+
+
+
+// =====================================
+// COMPLETE SELLER TABLE
+// =====================================
+
+function createSellerTable() {
+
+    const tableBody = document.getElementById("sellerTableBody");
+
+
+    tableBody.innerHTML = sellerdata.map(item => `
+
+        <tr>
+
+            <td>${item.seller_id}</td>
+
+            <td>₹${item.total_revenue.toLocaleString("en-IN")}</td>
+
+            <td>${item.avg_order_value.toLocaleString("en-IN")}</td>
+
+            <td>${item.total_orders.toLocaleString("en-IN")}</td>
+
+            <td>${item.total_product_sold.toLocaleString("en-IN")}</td>
+
+        </tr>
+
+    `).join("");
+
+}
+
+
+
+// =====================================
+// SEARCH SELLER
+// =====================================
+
+document.getElementById("searchInput").addEventListener("input", function () {
+
+    const searchValue = this.value.toLowerCase();
+
+
+    const filteredData = sellerdata.filter(item =>
+        item.seller_id.toLowerCase().includes(searchValue)
+    );
+
+
+    const tableBody = document.getElementById("sellerTableBody");
+
+
+    tableBody.innerHTML = filteredData.map(item => `
+
+        <tr>
+
+            <td>${item.seller_id}</td>
+
+            <td>₹${item.total_revenue.toLocaleString("en-IN")}</td>
+
+            <td>₹${item.avg_order_value.toLocaleString("en-IN")}</td>
+
+            <td>${item.total_orders.toLocaleString("en-IN")}</td>
+
+            <td>${item.total_product_sold.toLocaleString("en-IN")}</td>
+
+        </tr>
+
+    `).join("");
+
+});

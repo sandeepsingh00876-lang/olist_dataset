@@ -1,46 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Seller Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Seller Performance Dashboard</title>
 
     <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <h1 class="title">Seller Dashboard</h1>
-    <div class="charts-container">
-
-    <div class="chart-box">
-        <div class="chart-header">
-            <h3>Top 10 Sellers by Revenue</h3>
-        </div>
-        <canvas id="sellerChart"></canvas>
-</div>
-
-    <div class="chart-box">
-        <div class="chart-header">
-            <h3>Top 10 Sellers by Total Orders</h3>
-        </div>
-        <canvas id="sellerOrderChart"></canvas>
-
-</div>
-
-    <div class="chart-box">
-        <div class="chart-header">
-            <h3>Top 10 Sellers by Total Products</h3>
-        </div>
-        <canvas id="SellerProductChart"></canvas>
-    </div>
-
-    <div class="chart-box">
-        <div class="chart-header">
-            <h3>Top 10 Sellers by Avg Order Value</h3>
-        </div>
-        <canvas id="SellerAvgOrderValue"></canvas>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+
+    <div class="dashboard-header">
+
+        <div>
+            <h1>Seller Performance</h1>
+            <p>Olist E-Commerce Business Analysis</p>
+        </div>
+
+        <div class="header-badge">
+            Seller Analytics
+        </div>
+
+    </div>
+
+
+    <!-- KPI CARDS -->
+
+    <div class="kpi-container">
+
+        <div class="kpi-card">
+            <div class="kpi-label">Total Revenue</div>
+            <div class="kpi-value" id="totalRevenue">Loading...</div>
+            <div class="kpi-subtitle">Across all sellers</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-label">Total Orders</div>
+            <div class="kpi-value" id="totalOrders">Loading...</div>
+            <div class="kpi-subtitle">Unique orders</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-label">Total Sellers</div>
+            <div class="kpi-value" id="totalSellers">Loading...</div>
+            <div class="kpi-subtitle">Active sellers analyzed</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-label">Products Sold</div>
+            <div class="kpi-value" id="totalProducts">Loading...</div>
+            <div class="kpi-subtitle">Total products sold</div>
+        </div>
+
+    </div>
+
+
+    <!-- CHARTS -->
+
+    <div class="charts-container">
+
+        <!-- REVENUE -->
+
+        <div class="chart-box">
+
+            <div class="chart-header">
+                <div>
+                    <h3>Top Sellers by Revenue</h3>
+                    <p>Highest revenue-generating sellers</p>
+                </div>
+            </div>
+
+            <div class="chart-area">
+                <canvas id="revenueChart"></canvas>
+            </div>
+
+        </div>
+
+
+        <!-- ORDERS -->
+
+        <div class="chart-box">
+
+            <div class="chart-header">
+                <div>
+                    <h3>Top Sellers by Orders</h3>
+                    <p>Sellers with the highest order volume</p>
+                </div>
+            </div>
+
+            <div class="chart-area">
+                <canvas id="orderChart"></canvas>
+            </div>
+
+        </div>
+
+
+        <!-- PRODUCTS -->
+
+        <div class="chart-box">
+
+            <div class="chart-header">
+                <div>
+                    <h3>Top Sellers by Products Sold</h3>
+                    <p>Sellers selling the most products</p>
+                </div>
+            </div>
+
+            <div class="chart-area">
+                <canvas id="productChart"></canvas>
+            </div>
+
+        </div>
+
+
+        <!-- AOV -->
+
+        <div class="chart-box">
+
+            <div class="chart-header">
+                <div>
+                    <h3>Top Sellers by Average Order Value</h3>
+                    <p>Highest average order value</p>
+                </div>
+            </div>
+
+            <div class="chart-area">
+                <canvas id="aovChart"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- COMPLETE SELLER TABLE -->
+
+    <div class="table-section">
+
+        <div class="section-header">
+            <div>
+                <h2>Seller Performance Overview</h2>
+                <p>Complete seller-level performance metrics</p>
+            </div>
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search seller ID..."
+            >
+        </div>
+
+        <div class="table-wrapper">
+
+            <table id="sellerTable">
+
+                <thead>
+                    <tr>
+                        <th>Seller ID</th>
+                        <th>Total Revenue</th>
+                        <th>Avg Order Value</th>
+                        <th>Total Orders</th>
+                        <th>Products Sold</th>
+                    </tr>
+                </thead>
+
+                <tbody id="sellerTableBody">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
     <script src="javascript.js"></script>
 
 </body>
+
 </html>
